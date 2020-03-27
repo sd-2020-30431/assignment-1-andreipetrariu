@@ -11,14 +11,13 @@ import javafx.stage.Stage;
 
 public class LoginGUI extends Stage{
 	
-	private WLClient client;
 	private Button loginBtn;
 	private TextField usernameTF;
 	private PasswordField passwordTF;
 	private Label usernameLabel,passwordLabel;
 	private Scene loginScene;
 	
-	public LoginGUI() {
+	public LoginGUI(WLClient client) {
 		usernameLabel = new Label("Username");
 		usernameLabel.setTranslateX(-100);
 		usernameLabel.setTranslateY(-50);
@@ -40,7 +39,6 @@ public class LoginGUI extends Stage{
 		loginBtn.setTranslateY(60);
 		loginBtn.setOnAction(e -> {
 			if(usernameTF.getText().length()>0 && passwordTF.getText().length()>0) {
-				client = new WLClient();
 				client.login(usernameTF.getText(),passwordTF.getText());
 				this.close();
 			}

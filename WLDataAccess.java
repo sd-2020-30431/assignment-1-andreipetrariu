@@ -71,11 +71,14 @@ public class WLDataAccess {
  		    factory.close();}
     }
 	
-	public void createItem(BoughtItem item) {
+	public void createItems(List<BoughtItem> items) {
 		try {
 			session = factory.getCurrentSession();
 			session.beginTransaction();
-			session.save(item);
+			for(BoughtItem item : items) {
+				item.setIdUser(id);
+				session.save(item);
+			}
 			session.getTransaction().commit();
 		}
 		catch(Exception e) {
@@ -105,21 +108,88 @@ public class WLDataAccess {
 	}
 	
 	public List<BoughtItem> readAllItems(String username) {
-		List<BoughtItem> results = null;
+		List<BoughtItem> items = null;
 		try {
 			session = factory.getCurrentSession();
 			session.beginTransaction();
-			results = session.createQuery("from BoughtItem w where w.fk_user = :id").setParameter("id",id).list();
+			items = session.createQuery("from BoughtItem w where w.idUser = :id").setParameter("id",id).list();
+			session.getTransaction().commit();
+		}
+		catch(Exception e) {
+			System.out.println(e.toString());
+		}
+		finally {
+			session.close();
+		}
+		return items;
+	}
+
+	public List<BoughtItem> readUnusedItems(String username) {
+		List<BoughtItem> items = null;
+		try {
+			session = factory.getCurrentSession();
+			session.beginTransaction();
+			items = session.createQuery("from BoughtItem w where w.idUser = :id and w.consumptionDate = null").setParameter("id",id).list();
+			session.getTransaction().commit();
+		}
+		catch(Exception e) {
+			System.out.println(e.toString());
+		}
+		finally {
+			session.close();
+		}
+		return items;
+	}
+	
+	/*public void deleteItems(List<String> removedItems) {
+		try {
+			session = factory.getCurrentSession();
+			session.beginTransaction();
+			for(String itemName : removedItems) {
+				Query query = session.createQuery("delete BoughtItem w where w.name = :name").setParameter("name", itemName);
+				query.executeUpdate();
+			}
 			session.getTransaction().commit();
 		}
 		finally {
 			session.close();
-			return null;
+		}
+	}*/
+	
+	public void updateItems(List<String> removedItems) {
+		try {
+			session = factory.getCurrentSession();
+			session.beginTransaction();
+			for(String itemName : removedItems) {
+				Query query = session.createQuery("update BoughtItem w set w.consumptionDate = :today where w.name = :name").setParameter("today",new Date()).setParameter("name", itemName);
+				query.executeUpdate();
+			}
+			session.getTransaction().commit();
+		}
+		finally {
+			session.close();
 		}
 	}
 	
-	//todo: initItems - called at the beginning of the application
-		//checks the item database and moves items that have been wasted to the report
+	//called at the beginning of the application
+	//checks the item database and moves items that have been wasted to the report
+	public List<BoughtItem> initWastedItems() {
+		List<BoughtItem> wastedItems = null;
+		try {
+			Date today = new Date();
+			session = factory.getCurrentSession();
+			session.beginTransaction();
+			Query query = session.createQuery("from BoughtItem w where w.expirationDate < :date and w.idUser = :id").setParameter("date",today).setParameter("id",id);
+			wastedItems = query.list();
+			for(BoughtItem i : wastedItems) 
+				session.createQuery("delete BoughtItem w where w.name = :name").setParameter("name", i.getName()).executeUpdate();
+			session.getTransaction().commit();
+		}
+		finally {
+			session.close();
+		}
+		return wastedItems;
+	}
 	
 
 }

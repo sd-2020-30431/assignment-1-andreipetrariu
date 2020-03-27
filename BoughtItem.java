@@ -35,6 +35,9 @@ public class BoughtItem{
 	@Column(name="consumption_date")
 	private Date consumptionDate;
 	
+	@Column(name="fk_user")
+	private int idUser;
+	
 	public BoughtItem() {}
 	public BoughtItem(String name, int quantity, int calories, Date purchaseDate, Date expirationDate, Date consumptionDate) {
 		this.name = name;
@@ -54,9 +57,28 @@ public class BoughtItem{
 	public Date getPurchaseDate() {
 		return purchaseDate;
 	}
+	public Date getConsumptionDate() {
+		return consumptionDate;
+	}
 	
 	public int getQuantity() {
 		return quantity;
+	}
+
+	public int getCalories() {
+		return calories;
+	}
+
+	public int getIdUser() {
+		return idUser;
+	}
+	
+	public void setIdUser(int idUser) {
+		this.idUser = idUser;
+	}
+	
+	public void setConsumptionDate(Date date) {
+		this.consumptionDate = date;
 	}
 	
 	@Override
