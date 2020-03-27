@@ -42,7 +42,6 @@ import model.ShopItem;
 public class MainGUI extends Stage{
 	
 	private WLClient client;
-	private List<BoughtItem> groceriesList = new ArrayList<BoughtItem>();
 	private BorderPane gLayout,iLayout,rLayout,dLayout;
 	private Scene groceriesScene;
 	private Scene itemsScene;
@@ -50,13 +49,12 @@ public class MainGUI extends Stage{
 	private Scene donationScene;
 	private VBox[] items;
 	private HBox[] menuBar;
-	private String username,password;
+	private String username;
 	private Label ideal,user;
 	
 	public MainGUI(WLClient client,String username,String password) {
 		this.client = client;
 		this.username = username;
-		this.password = password;
 		
 		ideal = new Label();
 		user = new Label();
@@ -127,8 +125,16 @@ public class MainGUI extends Stage{
 		iLayout.setTop(menuBar[1]);
 		rLayout.setTop(new VBox(menuBar[2]));
 		dLayout.setTop(menuBar[3]);
+		
+		VBox places = new VBox(5);
+		ScrollPane placesSP = new ScrollPane(places);
+		placesSP.setStyle("-fx-padding: 15px");
+		List<String> donationPlaces = client.getDonationPlacesContents();
+		for(String place : donationPlaces)
+			places.getChildren().add(new Label(place));
+		dLayout.setCenter(placesSP);
 
-		groceriesScene = new Scene(gLayout,940,590);
+		groceriesScene = new Scene(gLayout,1150,590);
 		itemsScene = new Scene(iLayout,940,590);
 		reportsScene = new Scene(rLayout,1010,590);
 		donationScene = new Scene(dLayout,940,590);
@@ -147,7 +153,7 @@ public class MainGUI extends Stage{
 		HBox gBottomBox = new HBox();
 		ScrollPane gSP = new ScrollPane();
 		GridPane gLayout1 = new GridPane();
-		Button gBtn = new Button("Purchase selected groceries");
+		Button gBtn = new Button("Purchase");
 		
 		Date today = new Date();
 		Calendar c = Calendar.getInstance();
@@ -212,6 +218,7 @@ public class MainGUI extends Stage{
 			HBox hbox = new HBox(10);
 			HBox hbox1 = new HBox(10);
 		
+			
 			if(c.get(Calendar.MONTH)+1 <10)
 				month = "0" + String.valueOf(c.get(Calendar.MONTH)+1);
 			else month = String.valueOf(c.get(Calendar.MONTH)+1);
@@ -233,6 +240,7 @@ public class MainGUI extends Stage{
 		this.setX(-5);
 		this.setY(5);
 		this.setScene(groceriesScene);
+		this.setTitle("WasteLess");
 	}
 	
 	public void initItems(List<BoughtItem> items) {
@@ -267,15 +275,24 @@ public class MainGUI extends Stage{
 				}
 			});
 			for(BoughtItem item : items) {
+				Label itemName = new Label(item.getName());
 				HBox hbox = new HBox(3);
+				int days = (int) ((item.getExpirationDate().getTime() - new Date().getTime())/(1000*60*60*24));
+		
 				theDate = item.getPurchaseDate();
+				if(days == 1)
+					itemName.setTextFill(Color.web("FF1111"));
+				else {if (days < 4)
+						itemName.setTextFill(Color.web("DDDD11"));
+				else itemName.setTextFill(Color.web("11EE11"));
+				}
 				if(!(theDate.getYear() == lastDate.getYear() && theDate.getMonth() == lastDate.getMonth()
 						&& theDate.getDay() == lastDate.getDay())) {
 					i++;
 					j = 0;
 					iLayout1.add(new Label(item.getPurchaseDate().toLocaleString()),0,i,1,1);
 				}
-				hbox.getChildren().addAll(new Label("\t"), new Label(item.getName()), new Label(" x "), new Label(item.getQuantity()+"  "));
+				hbox.getChildren().addAll(new Label("\t"), itemName, new Label(" x "), new Label(item.getQuantity()+"  "));
 				hbox.getChildren().add((new CheckBox()));
 				iLayout1.add(hbox, ++j, i);
 				//iLayout1.add(new Label("\t" + item.getName() + " x " + item.getQuantity() + "  "),++j,i);

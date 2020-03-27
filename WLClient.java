@@ -10,11 +10,13 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.Duration;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import java.util.Scanner;
 
 import data_access.WLDataAccess;
 import javafx.scene.control.Alert;
@@ -25,31 +27,14 @@ import presentation.*;
 public class WLClient {
 	private MainGUI mainGUI;
 	private WLDataAccess dataAccess;
-	private final File weeklyReports,monthlyReports;
+	private File weeklyReports;
+	private File monthlyReports;
+	private File donationPlaces;
 	
-	public WLClient() {
-		weeklyReports = new File("C:\\Users\\Andrei\\Desktop\\Facultate\\Software_Design\\WasteLess\\weeklyReports.txt");
-		monthlyReports = new File("C:\\Users\\Andrei\\Desktop\\Facultate\\Software_Design\\WasteLess\\monthlyReports.txt");
-		dataAccess = new WLDataAccess();
+	public WLClient(WLDataAccess dataAccess) {
+		this.dataAccess = dataAccess;
 	}
 	
-	public void login(String username, String password) {
-		if(dataAccess.login(username, password)==true) {
-			mainGUI = new MainGUI(this,username,password);
-			mainGUI.initGroceries(dataAccess.readAllGroceries());
-			List<BoughtItem> wastedItems = dataAccess.initWastedItems();
-			List<BoughtItem> allItems = dataAccess.readAllItems(username);
-			updateReports(wastedItems);
-			computeRates(allItems);
-			mainGUI.initItems(dataAccess.readUnusedItems(username));
-		}
-		else {
-			Alert failedLogin = new Alert(AlertType.ERROR);
-			failedLogin.setHeaderText("Login failed!");
-			failedLogin.setContentText("Username and password combination not found.");
-			failedLogin.showAndWait();
-		}
-	}
 	private void updateReports(List<BoughtItem> wastedItems) {
 		Report report = AbstractReportFactory.getFactory("weekly").getReport();
 		String weeklyReport = report.createFile(wastedItems,weeklyReports.getAbsolutePath());
@@ -94,7 +79,7 @@ public class WLClient {
 			lastDate = new Date(0,0,0);
 			for(BoughtItem item : allItems) {
 				if(item.getConsumptionDate() == null) {
-					diffDays = item.getExpirationDate().getTime() - item.getPurchaseDate().getTime();
+					diffDays = item.getExpirationDate().getTime() - new Date().getTime();
 					diffDays /= 1000*60*60*24;
 					if(diffDays == 0)
 						diffDays = 1;
@@ -119,9 +104,38 @@ public class WLClient {
 			mainGUI.setRates(idealRate, userRate);
 	}
 	
+	public void setWeeklyReports(String weeklyReports) {
+		this.weeklyReports = new File(weeklyReports);
+	}
+	public void setMonthlyReports(String monthlyReports) {
+		this.monthlyReports = new File(monthlyReports);
+	}
+	public void setDonationPlaces(String donationPlaces) {
+		this.donationPlaces = new File(donationPlaces);
+	}
+	
+	public void login(String username, String password) {
+		if(dataAccess.login(username, password)==true) {
+			mainGUI = (MainGUI) Main.getContext().getBean("wasteLessGUI",this,username,password);
+			mainGUI.initGroceries(dataAccess.readAllGroceries());
+			List<BoughtItem> wastedItems = dataAccess.initWastedItems();
+			List<BoughtItem> allItems = dataAccess.readAllItems(username);
+			updateReports(wastedItems);
+			computeRates(allItems);
+			mainGUI.initItems(dataAccess.readUnusedItems(username));
+		}
+		else {
+			Alert failedLogin = new Alert(AlertType.ERROR);
+			failedLogin.setHeaderText("Login failed!");
+			failedLogin.setContentText("Username and password combination not found.");
+			failedLogin.showAndWait();
+		}
+	}
+	
 	public void logout(String username,String password) {
 		dataAccess.logout(username,password);
 		mainGUI.close();
+		Main.getContext().close();
 	}
 
 	public void createItems(List<BoughtItem> boughtItems,String username) {
@@ -136,6 +150,20 @@ public class WLClient {
 		mainGUI.initItems(dataAccess.readUnusedItems(username));
 		List<BoughtItem> allItems = dataAccess.readAllItems(username);
 		computeRates(allItems);
+	}
+	
+	public List<String> getDonationPlacesContents(){
+		List<String> places = new ArrayList<String>();
+		try {
+			Scanner fin = new Scanner(donationPlaces);
+			while(fin.hasNextLine())
+				places.add(fin.nextLine());
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+		for(String place : places)
+			System.out.println(place);
+		return places;
 	}
 	
 }

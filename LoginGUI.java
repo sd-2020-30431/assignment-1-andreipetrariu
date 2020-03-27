@@ -11,13 +11,14 @@ import javafx.stage.Stage;
 
 public class LoginGUI extends Stage{
 	
+	private WLClient client;
 	private Button loginBtn;
 	private TextField usernameTF;
 	private PasswordField passwordTF;
 	private Label usernameLabel,passwordLabel;
 	private Scene loginScene;
 	
-	public LoginGUI(WLClient client) {
+	public LoginGUI() {
 		usernameLabel = new Label("Username");
 		usernameLabel.setTranslateX(-100);
 		usernameLabel.setTranslateY(-50);
@@ -49,6 +50,12 @@ public class LoginGUI extends Stage{
 		
 		loginScene = new Scene(layout,300,200);
 		this.setScene(loginScene);
+		this.setTitle("WasteLess Login");
 		this.show();
 	}
+	
+	public void setClient(WLClient client) {
+		this.client = client;
+	}
+	
 }

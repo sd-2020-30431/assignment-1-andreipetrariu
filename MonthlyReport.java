@@ -52,20 +52,20 @@ public class MonthlyReport implements Report{
 				c.setTime(new SimpleDateFormat("dd/MM/yyyy").parse(mDate));
 			//writing this date in the file if it is empty
 			else {c.setTime(wastedItems.get(0).getExpirationDate());
-				sb.append("\nMonth " + String.format("%02d",c.get(Calendar.DAY_OF_MONTH)+1) + "/" + String.format("%02d",c.get(Calendar.MONTH)+1) + "/" + c.get(Calendar.YEAR));
+				sb.append("\nMonth " + String.format("%02d",c.get(Calendar.DAY_OF_MONTH)) + "/" + String.format("%02d",c.get(Calendar.MONTH)+1) + "/" + c.get(Calendar.YEAR));
 				sb.append(" - ");
 				c.add(Calendar.MONTH,1);
-				sb.append(String.format("%02d",c.get(Calendar.DAY_OF_MONTH)+1) + "/" + String.format("%02d",c.get(Calendar.MONTH)+1) + "/" + c.get(Calendar.YEAR)+" : ");
+				sb.append(String.format("%02d",c.get(Calendar.DAY_OF_MONTH)) + "/" + String.format("%02d",c.get(Calendar.MONTH)+1) + "/" + c.get(Calendar.YEAR)+" : ");
 			}
 			
 			//writing the items' names, quantities and calories in the file
 			for(BoughtItem item : wastedItems) {
 				if(item.getExpirationDate().after(c.getTime())) {
 					c.setTime(item.getExpirationDate());
-					sb.append("\nMonth " + String.format("%02d",c.get(Calendar.DAY_OF_MONTH)+1) + "/" + String.format("%02d",c.get(Calendar.MONTH)+1) + "/" + c.get(Calendar.YEAR));
+					sb.append("\nMonth " + String.format("%02d",c.get(Calendar.DAY_OF_MONTH)) + "/" + String.format("%02d",c.get(Calendar.MONTH)+1) + "/" + c.get(Calendar.YEAR));
 					sb.append(" - ");
 					c.add(Calendar.MONTH,1);
-					sb.append(String.format("%02d",c.get(Calendar.DAY_OF_MONTH)+1) + "/" + String.format("%02d",c.get(Calendar.MONTH)+1) + "/" + c.get(Calendar.YEAR)+" : ");
+					sb.append(String.format("%02d",c.get(Calendar.DAY_OF_MONTH)) + "/" + String.format("%02d",c.get(Calendar.MONTH)+1) + "/" + c.get(Calendar.YEAR)+" : ");
 				}
 				sb.append(item.getName()+" x "+item.getQuantity()+"("+item.getCalories()+")"+" | ");				
 			}			

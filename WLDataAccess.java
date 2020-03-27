@@ -36,9 +36,6 @@ public class WLDataAccess {
 	public boolean login(String username, String password) {
 			session = factory.getCurrentSession();
 			session.beginTransaction();
-			//Query query = session.createQuery("from User w where w.username = :username and w.password = :password and w.status=0")
-			//	    .setParameter("username", username)
-			//	    .setParameter("password", password);
 			Query query = session.createSQLQuery("select id_users from users where username = :username and password = :password and status=0")
 					    .setParameter("username", username)
 					    .setParameter("password", password);
@@ -140,21 +137,6 @@ public class WLDataAccess {
 		}
 		return items;
 	}
-	
-	/*public void deleteItems(List<String> removedItems) {
-		try {
-			session = factory.getCurrentSession();
-			session.beginTransaction();
-			for(String itemName : removedItems) {
-				Query query = session.createQuery("delete BoughtItem w where w.name = :name").setParameter("name", itemName);
-				query.executeUpdate();
-			}
-			session.getTransaction().commit();
-		}
-		finally {
-			session.close();
-		}
-	}*/
 	
 	public void updateItems(List<String> removedItems) {
 		try {

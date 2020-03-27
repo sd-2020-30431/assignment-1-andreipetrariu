@@ -56,10 +56,10 @@ public class WeeklyReport implements Report{
 				c.setTime(new SimpleDateFormat("dd/MM/yyyy").parse(wDate));
 			//writing this date in the file if it is empty
 			else {c.setTime(wastedItems.get(0).getExpirationDate());
-				sb.append("\nWeek " + String.format("%02d",c.get(Calendar.DAY_OF_MONTH)+1) + "/" + String.format("%02d",c.get(Calendar.MONTH)+1)+ "/" + c.get(Calendar.YEAR));
+				sb.append("\nWeek " + String.format("%02d",c.get(Calendar.DAY_OF_MONTH)) + "/" + String.format("%02d",c.get(Calendar.MONTH)+1)+ "/" + c.get(Calendar.YEAR));
 				sb.append(" - ");
 				c.add(Calendar.DAY_OF_MONTH,7);
-				sb.append(String.format("%02d",c.get(Calendar.DAY_OF_MONTH)+1) + "/" + String.format("%02d",c.get(Calendar.MONTH)+1) + "/" + c.get(Calendar.YEAR)+" : ");
+				sb.append(String.format("%02d",c.get(Calendar.DAY_OF_MONTH)) + "/" + String.format("%02d",c.get(Calendar.MONTH)+1) + "/" + c.get(Calendar.YEAR)+" : ");
 			}
 			
 			//writing the items' names, quantities and calories in the file
@@ -69,7 +69,7 @@ public class WeeklyReport implements Report{
 					sb.append("\nWeek " + String.format("%02d",c.get(Calendar.DAY_OF_MONTH)+1) + "/" + String.format("%02d",c.get(Calendar.MONTH)+1) + "/" + c.get(Calendar.YEAR));
 					sb.append(" - ");
 					c.add(Calendar.DAY_OF_MONTH,7);
-					sb.append(String.format("%02d",c.get(Calendar.DAY_OF_MONTH)+1) + "/" + String.format("%02d",c.get(Calendar.MONTH)+1) + "/" + c.get(Calendar.YEAR)+" : ");
+					sb.append(String.format("%02d",c.get(Calendar.DAY_OF_MONTH)) + "/" + String.format("%02d",c.get(Calendar.MONTH)+1) + "/" + c.get(Calendar.YEAR)+" : ");
 				}
 				sb.append(item.getName()+" x "+item.getQuantity()+"("+item.getCalories()+")"+" | ");				
 				}		

@@ -1,5 +1,9 @@
 package presentation;
 
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.AbstractApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
 import business.WLClient;
 import javafx.application.Application;
 import javafx.stage.Stage;
@@ -7,19 +11,19 @@ import javafx.stage.Stage;
 public class Main extends Application{
 	
 	private Stage loginGUI;
-	private WLClient client;
+	private static ClassPathXmlApplicationContext context;
 	
 	public static void main(String[] args) {
 		launch(args);
 	}
 
-	public void setClient(WLClient client) {
-		this.client = client;
-	}
-	
 	@Override
 	public void start(Stage primaryStage) throws Exception {
-		loginGUI = new LoginGUI(client);
+		context = new ClassPathXmlApplicationContext("applicationContext.xml");
+		loginGUI = context.getBean("wasteLessLoginUI",LoginGUI.class);
 		loginGUI.show();
+	}
+	public static AbstractApplicationContext getContext() {
+		return context;
 	}
 }
