@@ -1,0 +1,17 @@
+This is a guide for setting up the 'Waste less 1' assignment.
+
+1) Run the mysql script file 'wastelessdb_db' to import the database and values.
+
+2) In Eclipse, create a Java project.
+
+3) Copy-Paste the folders in the project and add the jars in spring, hibernate, javafx folders and the mysql driver jar
+to the build path.
+
+4) Run the Main.java file as a java application.
+
+ !If the login fails, set the 'status' value of the user you are loggin with(by default 'Andrei98) to 0.
+ !In my version of Waste Less, the reports only keep records of the groceries that have been wasted (haven't 
+been consumed until their expiration date). So, if you consume an item and it doesn't appear on the reports,
+it's OK, this is how I decided to implement the reports.  If you want to test the reports you have to modify the values
+in the database: set the expiration date before today, and when the application runs the item should be 
+written in the reports.
